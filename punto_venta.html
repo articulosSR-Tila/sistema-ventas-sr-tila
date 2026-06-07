@@ -89,7 +89,34 @@
         .btn-completar { background-color: #28a745; color: white; border: none; padding: 20px; border-radius: 8px; font-size: 20px; font-weight: bold; cursor: pointer; transition: 0.3s; width: 100%; }
         .btn-completar:hover { background-color: #218838; }
         .btn-completar:disabled { background-color: #6c757d; cursor: not-allowed; }
+@media (max-width: 768px) {
+    body {
+        height: auto; /* Permite que la pantalla crezca hacia abajo si es necesario */
+        overflow-y: auto;
+    }
 
+    .main-content {
+        flex-direction: column; /* Apila el formulario arriba y la tabla abajo */
+    }
+
+    .form-panel {
+        width: 100%; /* El formulario toma todo el ancho del celular */
+        box-sizing: border-box;
+    }
+
+    .table-panel {
+        width: 100%; /* La tabla toma todo el ancho del celular */
+        box-sizing: border-box;
+    }
+    
+    .search-container {
+        flex-direction: column; /* La barra de búsqueda y el filtro de agotados se apilan */
+    }
+    
+    .search-bar {
+        width: 100% !important; /* Ambos toman todo el ancho disponible */
+    }
+}
         /* ========================================= */
         /* ESTILOS EXCLUSIVOS PARA IMPRESORA TÉRMICA */
         /* ========================================= */
