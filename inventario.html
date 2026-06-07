@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Existencias | Sistema Santa Lucía</title>
+    
+    <style>
+        /* ESTILOS GLOBALES ORIGINALES */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background-color: #ffffff;
+            padding: 15px 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .btn-back {
+            padding: 10px 20px;
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .btn-back:hover {
+            background-color: #5a6268;
+        }
+
+        .main-content {
+            display: flex;
+            gap: 20px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        /* Panel Izquierdo: Formulario */
+        .form-panel {
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            width: 320px;
+            flex-shrink: 0;
+            box-sizing: border-box;
+        }
+
+        .form-panel h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #0056b3;
+            font-size: 18px;
+            border-bottom: 2px solid #f0f2f5;
+            padding-bottom: 10px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        textarea {
+            resize: none;
+            height: 70px;
+        }
+
+        .btn-save {
+            width: 100%;
+            padding: 12px;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-save:hover {
+            background-color: #004494;
+        }
+
+        .btn-cancel {
+            width: 100%;
+            padding: 8px;
+            background-color: #e2e3e5;
+            color: #383d41;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-top: 5px;
+            cursor: pointer;
+            display: none;
+        }
+
+        /* Panel Derecho: Tabla y Buscador */
+        .table-panel {
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .search-container {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .search-group {
+            display: flex;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .print-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-bar {
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 15px;
+            box-sizing: border-box;
+            margin-bottom: 0;
+        }
+
+        .search-bar:focus {
+            border-color: #0056b3;
+            outline: none;
+        }
+
+        .table-wrapper {
+            overflow-y: auto;
+            flex: 1;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            color: #495057;
+            padding: 12px;
+            font-weight: bold;
+            border-bottom: 2px solid #dee2e6;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+            vertical-align: middle;
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .qr-img {
+            width: 60px;
+            height: 60px;
+            background-color: #eee;
+            border-radius: 4px;
+            display: block;
+        }
+
+        .actions-cell {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-action {
+            padding: 6px 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-edit { background-color: #ffc107; color: #000; }
+        .btn-delete { background-color: #dc3545; color: white; }
+        .btn-print-sel { background-color: #17a2b8; color: white; padding: 10px 15px; font-size: 14px;}
+        .btn-print-all { background-color: #28a745; color: white; padding: 10px 15px; font-size: 14px;}
+
+        /* ESTILOS EXCLUSIVOS PARA IMPRESIÓN (PDF) */
+        #printArea {
+            display: none;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            body {
+                background-color: white;
+                margin: 0;
+                padding: 0;
+            }
+            #printArea {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5cm; /* Separación entre etiquetas */
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                visibility: visible;
+            }
+            #printArea * {
+                visibility: visible;
+            }
+            .etiqueta-print {
+                display: flex;
+                align-items: center;
+                width: 6.5cm; /* 2.5cm QR + 4cm Texto */
+                height: 2.5cm;
+                border: 1px dashed #ccc; /* Guía para recortar */
+                box-sizing: border-box;
+                padding: 0.1cm;
+                page-break-inside: avoid;
+            }
+            .etiqueta-qr {
+                width: 2.5cm;
+                height: 2.5cm;
+                flex-shrink: 0;
+            }
+            .etiqueta-texto {
+                width: 4cm;
+                height: 2.5cm;
+                padding-left: 0.2cm;
+                font-size: 10pt;
+                font-weight: bold;
+                color: #000;
+                display: flex;
+                align-items: center;
+                overflow: hidden;
+                line-height: 1.1;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="printArea"></div>
+
+    <div class="header">
+        <h1>Control de Existencias</h1>
+        <a href="menu.html" class="btn-back">Volver al Menú</a>
+    </div>
+
+    <div class="main-content">
+        <div class="form-panel">
+            <h3 id="formTitle">Agregar Nueva Pieza</h3>
+            <input type="hidden" id="editingId">
+            
+            <label for="nombre">Nombre de la pieza</label>
+            <input type="text" id="nombre" placeholder="Ej. San Benito 1 metro">
+            
+            <label for="descripcion">Descripción</label>
+            <textarea id="descripcion" placeholder="Detalles de la pieza, material o comunidad..."></textarea>
+            
+            <label for="cantidad">Cantidad en existencia</label>
+            <input type="number" id="cantidad" placeholder="0" min="0">
+            
+            <label for="precio">Precio al público ($)</label>
+            <input type="number" id="precio" placeholder="0.00" min="0" step="0.01">
+            
+            <button id="btnSave" class="btn-save">Guardar Pieza</button>
+            <button id="btnCancel" class="btn-cancel">Cancelar Edición</button>
+        </div>
+
+        <div class="table-panel">
+            <div class="search-container">
+                <div class="search-group">
+                    <input type="text" id="searchBar" class="search-bar" style="flex: 1;" placeholder="🔍 Buscar por nombre o descripción...">
+                    <select id="filtroEstado" class="search-bar" style="width: auto; cursor: pointer;">
+                        <option value="todos">Todos los artículos</option>
+                        <option value="agotados">Agotados (0 pzas)</option>
+                    </select>
+                </div>
+                <div class="print-group">
+                    <button id="btnImprimirSel" class="btn-action btn-print-sel">Imprimir Selección</button>
+                    <button id="btnImprimirTodos" class="btn-action btn-print-all">Imprimir Todo</button>
+                </div>
+            </div>
+            
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 40px;"><input type="checkbox" id="chkSelectAll" title="Seleccionar todos"></th>
+                            <th>Código QR</th>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Existencias</th>
+                            <th>Cant. Etiquetas</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDhXLz6mqKXPsWD5AQmSnYhq0d3GgATxmw",
+            authDomain: "articulos-sr-tila.firebaseapp.com",
+            projectId: "articulos-sr-tila",
+            storageBucket: "articulos-sr-tila.firebasestorage.app",
+            messagingSenderId: "563648337869",
+            appId: "1:563648337869:web:f63b0ec1081ecde06d9684",
+            measurementId: "G-EH8ZM97MRR"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = "index.html";
+            }
+        });
+
+        const productosCollection = collection(db, "productos");
+
+        const nombreInput = document.getElementById('nombre');
+        const descripcionInput = document.getElementById('descripcion');
+        const cantidadInput = document.getElementById('cantidad');
+        const precioInput = document.getElementById('precio');
+        const btnSave = document.getElementById('btnSave');
+        const btnCancel = document.getElementById('btnCancel');
+        const formTitle = document.getElementById('formTitle');
+        const editingIdInput = document.getElementById('editingId');
+        const searchBar = document.getElementById('searchBar');
+        const filtroEstado = document.getElementById('filtroEstado');
+        const tableBody = document.getElementById('inventoryTableBody');
+        const chkSelectAll = document.getElementById('chkSelectAll');
+
+        let listaProductos = [];
+
+        onSnapshot(productosCollection, (snapshot) => {
+            listaProductos = [];
+            tableBody.innerHTML = "";
+            
+            snapshot.forEach((docSnap) => {
+                const producto = docSnap.data();
+                producto.id = docSnap.id;
+                listaProductos.push(producto);
+            });
+            
+            filtrarTabla();
+        });
+
+        function renderTable(datos) {
+            tableBody.innerHTML = "";
+            chkSelectAll.checked = false; // Reiniciar el master checkbox
+            
+            if (datos.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#888;">No se encontraron artículos.</td></tr>`;
+                return;
+            }
+
+            datos.forEach((item) => {
+                const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${item.id}`;
+                const estiloAgotado = item.cantidad === 0 ? 'color: #dc3545; font-weight: bold;' : '';
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><input type="checkbox" class="chk-item" value="${item.id}"></td>
+                    <td>
+                        <a href="${qrUrl}" target="_blank" title="Click para abrir en grande">
+                            <img src="${qrUrl}" class="qr-img" alt="QR">
+                        </a>
+                    </td>
+                    <td style="font-weight: bold;">${item.nombre}</td>
+                    <td style="color: #666; max-width: 250px;">${item.descripcion || 'Sin descripción'}</td>
+                    <td style="${estiloAgotado}">${item.cantidad} pzas</td>
+                    <td>
+                        <input type="number" class="print-qty" data-id="${item.id}" value="1" min="1" style="width: 60px; margin-bottom: 0; padding: 6px;">
+                    </td>
+                    <td class="actions-cell">
+                        <button class="btn-action btn-edit" data-id="${item.id}">Editar</button>
+                        <button class="btn-action btn-delete" data-id="${item.id}">Borrar</button>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+
+            asignarEventosBotones();
+        }
+
+        btnSave.addEventListener('click', async () => {
+            const nombre = nombreInput.value.trim();
+            const descripcion = descripcionInput.value.trim();
+            const cantidad = parseInt(cantidadInput.value);
+            const precio = parseFloat(precioInput.value);
+            const editingId = editingIdInput.value;
+
+            if (!nombre || isNaN(cantidad) || isNaN(precio)) {
+                alert("Por favor, llena correctamente los campos obligatorios.");
+                return;
+            }
+
+            const datosProducto = { nombre, descripcion, cantidad, precio };
+
+            try {
+                if (editingId === "") {
+                    await addDoc(productosCollection, datosProducto);
+                    alert("Pieza registrada con éxito.");
+                } else {
+                    const docRef = doc(db, "productos", editingId);
+                    await updateDoc(docRef, datosProducto);
+                    alert("Información actualizada.");
+                    cancelarEdicion();
+                }
+                limpiarFormulario();
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Hubo un error al guardar.");
+            }
+        });
+
+        function asignarEventosBotones() {
+            document.querySelectorAll('.btn-edit').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = e.target.getAttribute('data-id');
+                    const producto = listaProductos.find(p => p.id === id);
+                    
+                    if (producto) {
+                        formTitle.innerText = "Modificar Pieza";
+                        editingIdInput.value = producto.id;
+                        nombreInput.value = producto.nombre;
+                        descripcionInput.value = producto.descripcion;
+                        cantidadInput.value = producto.cantidad;
+                        precioInput.value = producto.precio;
+                        
+                        btnSave.innerText = "Guardar Cambios";
+                        btnCancel.style.display = "block";
+                    }
+                });
+            });
+
+            document.querySelectorAll('.btn-delete').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const id = e.target.getAttribute('data-id');
+                    if (confirm("¿Seguro que deseas eliminar este artículo?")) {
+                        await deleteDoc(doc(db, "productos", id));
+                    }
+                });
+            });
+        }
+
+        function filtrarTabla() {
+            const texto = searchBar.value.toLowerCase().trim();
+            const estado = filtroEstado.value;
+            
+            const resultados = listaProductos.filter(producto => {
+                const nombreMatch = producto.nombre.toLowerCase().includes(texto);
+                const descMatch = (producto.descripcion || "").toLowerCase().includes(texto);
+                const coincideTexto = nombreMatch || descMatch;
+                const coincideEstado = estado === "todos" ? true : (producto.cantidad === 0);
+                
+                return coincideTexto && coincideEstado;
+            });
+            
+            renderTable(resultados);
+        }
+
+        searchBar.addEventListener('input', filtrarTabla);
+        filtroEstado.addEventListener('change', filtrarTabla);
+
+        function limpiarFormulario() {
+            nombreInput.value = "";
+            descripcionInput.value = "";
+            cantidadInput.value = "";
+            precioInput.value = "";
+        }
+
+        function cancelarEdicion() {
+            formTitle.innerText = "Agregar Nueva Pieza";
+            editingIdInput.value = "";
+            btnSave.innerText = "Guardar Pieza";
+            btnCancel.style.display = "none";
+            limpiarFormulario();
+        }
+
+        btnCancel.addEventListener('click', cancelarEdicion);
+
+        /* =========================================
+           LÓGICA DE IMPRESIÓN Y SELECCIÓN (ATLON)
+        ========================================= */
+
+        // Checkbox maestro para seleccionar/deseleccionar todos
+        chkSelectAll.addEventListener('change', (e) => {
+            const isChecked = e.target.checked;
+            document.querySelectorAll('.chk-item').forEach(chk => chk.checked = isChecked);
+        });
+
+        // Función constructora del PDF nativo
+        function ejecutarImpresion(itemsAImprimir) {
+            const printArea = document.getElementById('printArea');
+            printArea.innerHTML = ''; // Limpiar buffer
+
+            if(itemsAImprimir.length === 0) {
+                alert("No has seleccionado artículos o no hay artículos en la tabla.");
+                return;
+            }
+
+            itemsAImprimir.forEach(item => {
+                const producto = listaProductos.find(p => p.id === item.id);
+                if (producto) {
+                    for (let i = 0; i < item.cantidad; i++) {
+                        // Generamos el QR a buena resolución
+                        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${producto.id}`;
+                        
+                        const etiqueta = document.createElement('div');
+                        etiqueta.className = 'etiqueta-print';
+                        etiqueta.innerHTML = `
+                            <img src="${qrUrl}" class="etiqueta-qr" alt="QR">
+                            <div class="etiqueta-texto">${producto.nombre}</div>
+                        `;
+                        printArea.appendChild(etiqueta);
+                    }
+                }
+            });
+
+            // Esperar 1.5 segundos (1500 ms) para que los QR se descarguen antes de abrir la vista previa
+            setTimeout(() => {
+                window.print();
+            }, 1500);
+        }
+
+        // Evento: Imprimir Seleccionados
+        document.getElementById('btnImprimirSel').addEventListener('click', () => {
+            const checkboxes = document.querySelectorAll('.chk-item:checked');
+            const items = Array.from(checkboxes).map(chk => {
+                const row = chk.closest('tr');
+                const qtyInput = row.querySelector('.print-qty');
+                return { 
+                    id: chk.value, 
+                    cantidad: parseInt(qtyInput.value) || 1 
+                };
+            });
+            ejecutarImpresion(items);
+        });
+
+        // Evento: Imprimir Todos los de la vista actual
+        document.getElementById('btnImprimirTodos').addEventListener('click', () => {
+            // Toma todos los que estén actualmente renderizados en la tabla
+            const filas = document.querySelectorAll('#inventoryTableBody tr');
+            const items = [];
+            
+            filas.forEach(row => {
+                const chk = row.querySelector('.chk-item');
+                const qtyInput = row.querySelector('.print-qty');
+                if(chk && qtyInput) {
+                    items.push({
+                        id: chk.value,
+                        cantidad: parseInt(qtyInput.value) || 1
+                    });
+                }
+            });
+            
+            ejecutarImpresion(items);
+        });
+
+    </script>
+</body>
+</html>
