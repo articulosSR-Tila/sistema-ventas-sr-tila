@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Existencias | Sistema Santa Lucía</title>
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background-color: #ffffff;
+            padding: 15px 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .btn-back {
+            padding: 10px 20px;
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .btn-back:hover {
+            background-color: #5a6268;
+        }
+
+        .main-content {
+            display: flex;
+            gap: 20px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        /* Panel Izquierdo: Formulario */
+        .form-panel {
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            width: 320px;
+            flex-shrink: 0;
+            box-sizing: border-box;
+        }
+
+        .form-panel h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #0056b3;
+            font-size: 18px;
+            border-bottom: 2px solid #f0f2f5;
+            padding-bottom: 10px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        textarea {
+            resize: none;
+            height: 70px;
+        }
+
+        .btn-save {
+            width: 100%;
+            padding: 12px;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-save:hover {
+            background-color: #004494;
+        }
+
+        .btn-cancel {
+            width: 100%;
+            padding: 8px;
+            background-color: #e2e3e5;
+            color: #383d41;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-top: 5px;
+            cursor: pointer;
+            display: none;
+        }
+
+        /* Panel Derecho: Tabla y Buscador */
+        .table-panel {
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .search-container {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-bar {
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 15px;
+            box-sizing: border-box;
+            margin-bottom: 0; /* Para evitar el margen extra del estilo global */
+        }
+
+        .search-bar:focus {
+            border-color: #0056b3;
+            outline: none;
+        }
+
+        .table-wrapper {
+            overflow-y: auto;
+            flex: 1;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            color: #495057;
+            padding: 12px;
+            font-weight: bold;
+            border-bottom: 2px solid #dee2e6;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+            vertical-align: middle;
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .qr-img {
+            width: 60px;
+            height: 60px;
+            background-color: #eee;
+            border-radius: 4px;
+            display: block;
+        }
+
+        .actions-cell {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-action {
+            padding: 6px 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-edit {
+            background-color: #ffc107;
+            color: #000;
+        }
+
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Control de Existencias</h1>
+        <a href="menu.html" class="btn-back">Volver al Menú</a>
+    </div>
+
+    <div class="main-content">
+        <div class="form-panel">
+            <h3 id="formTitle">Agregar Nueva Pieza</h3>
+            <input type="hidden" id="editingId">
+            
+            <label for="nombre">Nombre de la pieza</label>
+            <input type="text" id="nombre" placeholder="Ej. San Benito 1 metro">
+            
+            <label for="descripcion">Descripción</label>
+            <textarea id="descripcion" placeholder="Detalles de la pieza, material o comunidad..."></textarea>
+            
+            <label for="cantidad">Cantidad en existencia</label>
+            <input type="number" id="cantidad" placeholder="0" min="0">
+            
+            <label for="precio">Precio al público ($)</label>
+            <input type="number" id="precio" placeholder="0.00" min="0" step="0.01">
+            
+            <button id="btnSave" class="btn-save">Guardar Pieza</button>
+            <button id="btnCancel" class="btn-cancel">Cancelar Edición</button>
+        </div>
+
+        <div class="table-panel">
+            <div class="search-container">
+                <input type="text" id="searchBar" class="search-bar" style="flex: 1;" placeholder="🔍 Buscar por nombre o descripción...">
+                <select id="filtroEstado" class="search-bar" style="width: auto; cursor: pointer;">
+                    <option value="todos">Todos los artículos</option>
+                    <option value="agotados">Agotados (0 pzas)</option>
+                </select>
+            </div>
+            
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Código QR</th>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Existencias</th>
+                            <th>Precio</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryTableBody">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+        // Importaciones del vigilante de seguridad
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+
+        // Configuración de tu proyecto
+        const firebaseConfig = {
+            apiKey: "AIzaSyDhXLz6mqKXPsWD5AQmSnYhq0d3GgATxmw",
+            authDomain: "articulos-sr-tila.firebaseapp.com",
+            projectId: "articulos-sr-tila",
+            storageBucket: "articulos-sr-tila.firebasestorage.app",
+            messagingSenderId: "563648337869",
+            appId: "1:563648337869:web:f63b0ec1081ecde06d9684",
+            measurementId: "G-EH8ZM97MRR"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        // VIGILANTE DE SEGURIDAD (Si no hay sesión, expulsa al usuario)
+        const auth = getAuth(app);
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = "index.html";
+            }
+        });
+
+        const productosCollection = collection(db, "productos");
+
+        // Elementos de la interfaz
+        const nombreInput = document.getElementById('nombre');
+        const descripcionInput = document.getElementById('descripcion');
+        const cantidadInput = document.getElementById('cantidad');
+        const precioInput = document.getElementById('precio');
+        const btnSave = document.getElementById('btnSave');
+        const btnCancel = document.getElementById('btnCancel');
+        const formTitle = document.getElementById('formTitle');
+        const editingIdInput = document.getElementById('editingId');
+        const searchBar = document.getElementById('searchBar');
+        const filtroEstado = document.getElementById('filtroEstado');
+        const tableBody = document.getElementById('inventoryTableBody');
+
+        let listaProductos = []; // Almacén local de datos
+
+        // 1. ESCUCHAR BASE DE DATOS EN TIEMPO REAL
+        onSnapshot(productosCollection, (snapshot) => {
+            listaProductos = [];
+            tableBody.innerHTML = "";
+            
+            snapshot.forEach((docSnap) => {
+                const producto = docSnap.data();
+                producto.id = docSnap.id;
+                listaProductos.push(producto);
+            });
+            
+            // Usamos la función de filtrar para que respete si estamos viendo los agotados
+            filtrarTabla();
+        });
+
+        // 2. FUNCIÓN PARA MOSTRAR LOS DATOS EN LA TABLA
+        function renderTable(datos) {
+            tableBody.innerHTML = "";
+            
+            if (datos.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#888;">No se encontraron artículos que coincidan con la búsqueda.</td></tr>`;
+                return;
+            }
+
+            datos.forEach((item) => {
+                const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${item.id}`;
+                
+                // Si la existencia es cero, le damos un estilo visual para resaltarlo
+                const estiloAgotado = item.cantidad === 0 ? 'color: #dc3545; font-weight: bold;' : '';
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <a href="${qrUrl}" target="_blank" title="Click para abrir en grande e imprimir">
+                            <img src="${qrUrl}" class="qr-img" alt="QR">
+                        </a>
+                    </td>
+                    <td style="font-weight: bold;">${item.nombre}</td>
+                    <td style="color: #666; max-width: 250px;">${item.descripcion || 'Sin descripción'}</td>
+                    <td style="${estiloAgotado}">${item.cantidad} pzas</td>
+                    <td>$${parseFloat(item.precio).toFixed(2)}</td>
+                    <td class="actions-cell">
+                        <button class="btn-action btn-edit" data-id="${item.id}">Editar</button>
+                        <button class="btn-action btn-delete" data-id="${item.id}">Borrar</button>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+
+            asignarEventosBotones();
+        }
+
+        // 3. AGREGAR O EDITAR ARTÍCULO
+        btnSave.addEventListener('click', async () => {
+            const nombre = nombreInput.value.trim();
+            const descripcion = descripcionInput.value.trim();
+            const cantidad = parseInt(cantidadInput.value);
+            const precio = parseFloat(precioInput.value);
+            const editingId = editingIdInput.value;
+
+            if (!nombre || isNaN(cantidad) || isNaN(precio)) {
+                alert("Por favor, llena correctamente los campos obligatorios (Nombre, Cantidad y Precio).");
+                return;
+            }
+
+            const datosProducto = {
+                nombre: nombre,
+                descripcion: descripcion,
+                cantidad: cantidad,
+                precio: precio
+            };
+
+            try {
+                if (editingId === "") {
+                    await addDoc(productosCollection, datosProducto);
+                    alert("Pieza registrada con éxito. Código QR generado.");
+                } else {
+                    const docRef = doc(db, "productos", editingId);
+                    await updateDoc(docRef, datosProducto);
+                    alert("Información actualizada con éxito.");
+                    cancelarEdicion();
+                }
+                limpiarFormulario();
+            } catch (error) {
+                console.error("Error al guardar en Firebase:", error);
+                alert("Hubo un error al intentar guardar los datos.");
+            }
+        });
+
+        // 4. CONFIGURAR BOTONES DE LA TABLA (EDITAR / BORRAR)
+        function asignarEventosBotones() {
+            document.querySelectorAll('.btn-edit').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = e.target.getAttribute('data-id');
+                    const producto = listaProductos.find(p => p.id === id);
+                    
+                    if (producto) {
+                        formTitle.innerText = "Modificar Pieza";
+                        editingIdInput.value = producto.id;
+                        nombreInput.value = producto.nombre;
+                        descripcionInput.value = producto.descripcion;
+                        cantidadInput.value = producto.cantidad;
+                        precioInput.value = producto.precio;
+                        
+                        btnSave.innerText = "Guardar Cambios";
+                        btnCancel.style.display = "block";
+                    }
+                });
+            });
+
+            document.querySelectorAll('.btn-delete').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const id = e.target.getAttribute('data-id');
+                    if (confirm("¿Estás seguro de que deseas eliminar este artículo de forma permanente?")) {
+                        await deleteDoc(doc(db, "productos", id));
+                    }
+                });
+            });
+        }
+
+        // 5. BUSCADOR Y FILTRO DE AGOTADOS
+        function filtrarTabla() {
+            const texto = searchBar.value.toLowerCase().trim();
+            const estado = filtroEstado.value; // "todos" o "agotados"
+            
+            const resultados = listaProductos.filter(producto => {
+                const nombreMatch = producto.nombre.toLowerCase().includes(texto);
+                const descMatch = (producto.descripcion || "").toLowerCase().includes(texto);
+                const coincideTexto = nombreMatch || descMatch;
+                
+                // Si seleccionamos agotados, la cantidad debe ser estrictamente 0
+                const coincideEstado = estado === "todos" ? true : (producto.cantidad === 0);
+                
+                return coincideTexto && coincideEstado;
+            });
+            
+            renderTable(resultados);
+        }
+
+        // Ejecutar el filtro cuando se escribe o cuando se cambia el selector
+        searchBar.addEventListener('input', filtrarTabla);
+        filtroEstado.addEventListener('change', filtrarTabla);
+
+        // FUNCIONES AUXILIARES
+        function limpiarFormulario() {
+            nombreInput.value = "";
+            descripcionInput.value = "";
+            cantidadInput.value = "";
+            precioInput.value = "";
+        }
+
+        function cancelarEdicion() {
+            formTitle.innerText = "Agregar Nueva Pieza";
+            editingIdInput.value = "";
+            btnSave.innerText = "Guardar Pieza";
+            btnCancel.style.display = "none";
+            limpiarFormulario();
+        }
+
+        btnCancel.addEventListener('click', cancelarEdicion);
+    </script>
+</body>
+</html>
