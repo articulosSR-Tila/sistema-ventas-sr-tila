@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificador de Precios | Sistema Santa Lucía</title>
+    
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .header {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background-color: #ffffff;
+            padding: 15px 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            box-sizing: border-box;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 22px;
+            color: #333;
+        }
+
+        .btn-back {
+            padding: 10px 20px;
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .btn-back:hover {
+            background-color: #5a6268;
+        }
+
+        /* Contenedor del Escáner */
+        #reader-container {
+            width: 100%;
+            max-width: 600px;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            box-sizing: border-box;
+            margin-bottom: 20px;
+        }
+
+        #reader {
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        /* Tarjeta de Resultados (Oculta por defecto) */
+        #result-card {
+            width: 100%;
+            max-width: 600px;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 6px 15px rgba(0, 86, 179, 0.15);
+            box-sizing: border-box;
+            display: none;
+            text-align: center;
+            border: 2px solid #0056b3;
+        }
+
+        .result-title {
+            font-size: 28px;
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .result-price {
+            font-size: 40px;
+            color: #28a745;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .result-stock {
+            font-size: 20px;
+            color: #0056b3;
+            margin-bottom: 15px;
+            font-weight: bold;
+            background-color: #e6f0fa;
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 8px;
+        }
+
+        .result-desc {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 25px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .btn-scan-again {
+            padding: 12px 30px;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-scan-again:hover {
+            background-color: #004494;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Verificador de Precios</h1>
+        <a href="menu.html" class="btn-back">Volver al Menú</a>
+    </div>
+
+    <div id="reader-container">
+        <div id="reader"></div>
+    </div>
+
+    <div id="result-card">
+        <h2 id="res-nombre" class="result-title">Nombre del Artículo</h2>
+        <div id="res-precio" class="result-price">$0.00</div>
+        <div class="result-stock">Existencia: <span id="res-cantidad">0</span> piezas</div>
+        <div id="res-desc" class="result-desc">Descripción del artículo aquí...</div>
+        <button id="btnScanAgain" class="btn-scan-again">Escanear Otro Artículo</button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+
+        // Tu configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDhXLz6mqKXPsWD5AQmSnYhq0d3GgATxmw",
+            authDomain: "articulos-sr-tila.firebaseapp.com",
+            projectId: "articulos-sr-tila",
+            storageBucket: "articulos-sr-tila.firebasestorage.app",
+            messagingSenderId: "563648337869",
+            appId: "1:563648337869:web:f63b0ec1081ecde06d9684",
+            measurementId: "G-EH8ZM97MRR"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Referencias a la interfaz
+        const resultCard = document.getElementById('result-card');
+        const readerContainer = document.getElementById('reader-container');
+        const resNombre = document.getElementById('res-nombre');
+        const resPrecio = document.getElementById('res-precio');
+        const resCantidad = document.getElementById('res-cantidad');
+        const resDesc = document.getElementById('res-desc');
+        const btnScanAgain = document.getElementById('btnScanAgain');
+
+        // Configuración del Escáner QR
+        let html5QrcodeScanner = new Html5QrcodeScanner(
+            "reader", 
+            { fps: 10, qrbox: {width: 250, height: 250} }, 
+            /* verbose= */ false
+        );
+
+        // Lo que sucede cuando el QR se lee con éxito
+        async function onScanSuccess(decodedText, decodedResult) {
+            // Pausar el escáner para evitar lecturas múltiples
+            html5QrcodeScanner.pause(true);
+            
+            try {
+                // 1. Ir a buscar el ID escaneado a Firebase
+                const docRef = doc(db, "productos", decodedText);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    // 2. Si existe, sacar la información
+                    const producto = docSnap.data();
+                    
+                    // 3. Ocultar cámara y mostrar resultados
+                    readerContainer.style.display = "none";
+                    resultCard.style.display = "block";
+                    
+                    // 4. Llenar la tarjeta
+                    resNombre.innerText = producto.nombre;
+                    resPrecio.innerText = `$${parseFloat(producto.precio).toFixed(2)}`;
+                    resCantidad.innerText = producto.cantidad;
+                    resDesc.innerText = producto.descripcion || 'Sin descripción';
+                } else {
+                    // Si el código pertenece a un producto borrado o no registrado
+                    alert("El código QR no corresponde a ningún artículo en el sistema.");
+                    html5QrcodeScanner.resume();
+                }
+            } catch (error) {
+                console.error("Error buscando el artículo:", error);
+                alert("Hubo un error al conectar con la base de datos.");
+                html5QrcodeScanner.resume();
+            }
+        }
+
+        // Encender la cámara
+        html5QrcodeScanner.render(onScanSuccess, (error) => {
+            // Ignoramos los errores de lectura constantes mientras la cámara enfoca
+        });
+
+        // Botón para volver a escanear
+        btnScanAgain.addEventListener('click', () => {
+            resultCard.style.display = "none";
+            readerContainer.style.display = "block";
+            html5QrcodeScanner.resume(); // Volver a activar la cámara
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso | Sistema Santa Lucía</title>
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .login-container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 350px;
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #333333;
+            margin-bottom: 5px;
+        }
+
+        h2 {
+            font-size: 16px;
+            color: #666666;
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-weight: normal;
+        }
+
+        label {
+            display: block;
+            text-align: left;
+            font-size: 14px;
+            color: #555555;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #cccccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        input:focus {
+            border-color: #0056b3;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #004494;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <h1>Sistema Santa Lucía</h1>
+        <h2>Inicio de Sesión</h2>
+        
+        <label for="email">Correo electrónico</label>
+        <input type="email" id="email" placeholder="ejemplo@correo.com">
+        
+        <label for="password">Contraseña</label>
+        <input type="password" id="password" placeholder="Tu contraseña">
+        
+        <button id="btnLogin">Ingresar</button>
+    </div>
+
+    <script type="module">
+        // Importaciones de Firebase v12.14.0
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-analytics.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+
+        // Tu configuración exacta
+        const firebaseConfig = {
+            apiKey: "AIzaSyDhXLz6mqKXPsWD5AQmSnYhq0d3GgATxmw",
+            authDomain: "articulos-sr-tila.firebaseapp.com",
+            projectId: "articulos-sr-tila",
+            storageBucket: "articulos-sr-tila.firebasestorage.app",
+            messagingSenderId: "563648337869",
+            appId: "1:563648337869:web:f63b0ec1081ecde06d9684",
+            measurementId: "G-EH8ZM97MRR"
+        };
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth(app);
+
+        // Lógica del botón de inicio de sesión
+        document.getElementById('btnLogin').addEventListener('click', () => {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if (email === "" || password === "") {
+                alert("Por favor, llena todos los campos.");
+                return;
+            }
+
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Redirigir al menú principal
+                    window.location.href = "menu.html";
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                    alert("Credenciales incorrectas. Verifica tu correo y contraseña.");
+                });
+        });
+    </script>
+    
+</body>
+</html>

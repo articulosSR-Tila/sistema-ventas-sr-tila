@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Punto de Venta | Sistema Santa Lucía</title>
+    
+    <style>
+        /* ESTILOS DE LA PANTALLA (NO SE IMPRIMEN) */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background-color: #ffffff;
+            padding: 15px 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .header h1 { margin: 0; font-size: 24px; color: #333; }
+        .btn-back { padding: 10px 20px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; }
+        .btn-back:hover { background-color: #5a6268; }
+        .btn-corte { padding: 10px 20px; background-color: #ffc107; color: #000; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-right: 10px; }
+
+        .main-content {
+            display: flex;
+            gap: 20px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        /* Panel Izquierdo: Buscador y Carrito */
+        .left-panel {
+            flex: 2;
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .search-box { margin-bottom: 20px; }
+        .search-box input { width: 100%; padding: 15px; font-size: 18px; border: 2px solid #0056b3; border-radius: 8px; box-sizing: border-box; }
+        
+        .table-wrapper { flex: 1; overflow-y: auto; border: 1px solid #e9ecef; border-radius: 6px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { background-color: #f8f9fa; padding: 12px; border-bottom: 2px solid #dee2e6; position: sticky; top: 0; }
+        td { padding: 12px; border-bottom: 1px solid #dee2e6; vertical-align: middle; }
+        
+        .btn-remove { background-color: #dc3545; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; }
+        .qty-input { width: 60px; padding: 5px; text-align: center; border: 1px solid #ccc; border-radius: 4px; }
+
+        /* Panel Derecho: Cobro */
+        .right-panel {
+            flex: 1;
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            overflow-y: auto;
+        }
+
+        .total-box { background-color: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px; border: 2px solid #e9ecef; }
+        .total-box h2 { margin: 0; font-size: 20px; color: #666; }
+        .total-box .gran-total { font-size: 48px; color: #28a745; margin: 10px 0; font-weight: bold; }
+        .total-box .subtotal-info { font-size: 14px; color: #888; margin-top: 5px; }
+
+        .payment-box label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 15px; }
+        .payment-box input, .payment-box select { width: 100%; padding: 12px; font-size: 18px; margin-bottom: 15px; border: 2px solid #ccc; border-radius: 8px; box-sizing: border-box; }
+        .payment-box input[type="number"] { font-size: 20px; text-align: center; }
+        
+        .cambio-box { text-align: center; font-size: 24px; color: #0056b3; font-weight: bold; margin-bottom: 20px; }
+
+        .btn-completar { background-color: #28a745; color: white; border: none; padding: 20px; border-radius: 8px; font-size: 20px; font-weight: bold; cursor: pointer; transition: 0.3s; width: 100%; }
+        .btn-completar:hover { background-color: #218838; }
+        .btn-completar:disabled { background-color: #6c757d; cursor: not-allowed; }
+
+        /* ========================================= */
+        /* ESTILOS EXCLUSIVOS PARA IMPRESORA TÉRMICA */
+        /* ========================================= */
+        .solo-impresion { display: none; }
+        
+        @media print {
+            .no-imprimir { display: none !important; }
+            
+            .solo-impresion.mostrar-impresion { 
+                display: block !important; 
+                width: 58mm; /* Ajuste estándar de miniprinter */
+                font-family: monospace; 
+                font-size: 12px; 
+                color: #000;
+                margin: 0; 
+                padding: 0;
+            }
+            .ticket-header { text-align: center; margin-bottom: 10px; }
+            .ticket-header h2 { margin: 0; font-size: 16px; }
+            .ticket-header p { margin: 2px 0; font-size: 10px; }
+            .ticket-table { width: 100%; border-top: 1px dashed #000; border-bottom: 1px dashed #000; margin-bottom: 10px; border-collapse: collapse; }
+            .ticket-table th, .ticket-table td { text-align: left; padding: 4px 0; font-size: 11px; }
+            .ticket-table .right { text-align: right; }
+            .ticket-totals { text-align: right; font-weight: bold; font-size: 14px; margin-bottom: 15px; }
+            .desc-linea { font-weight: normal; font-size: 11px; margin-bottom: 5px; }
+            .ticket-footer { text-align: center; font-size: 10px; }
+            .firma-corte { margin-top: 40px; text-align: center; }
+            .firma-corte p { margin: 5px 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- INTERFAZ DEL PUNTO DE VENTA (NO SE IMPRIME) -->
+    <div class="header no-imprimir">
+        <h1>Punto de Venta --- Sucursal Sta Lucia. Articulos Religiosos Sr de Tila</h1>
+        <div>
+            <button id="btnCorte" class="btn-corte">Corte de Caja</button>
+            <a href="menu.html" class="btn-back">Volver al Menú</a>
+        </div>
+    </div>
+
+    <div class="main-content no-imprimir">
+        <div class="left-panel">
+            <div class="search-box">
+                <input type="text" id="inputCodigo" placeholder="Escanea el QR aquí o ingresa el código..." autofocus>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Artículo</th>
+                            <th>Precio</th>
+                            <th>Cantidad</th>
+                            <th>Subtotal</th>
+                            <th>Quitar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="carritoBody">
+                        <!-- Artículos escaneados -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="total-box">
+                <h2>Total a Pagar</h2>
+                <div class="gran-total" id="txtTotal">$0.00</div>
+                <div class="subtotal-info" id="txtSubtotalInfo"></div>
+            </div>
+            
+            <div class="payment-box">
+                <label>Cliente (Opcional)</label>
+                <input type="text" id="inputCliente" placeholder="Público en general">
+                
+                <label>Descuento aplicable</label>
+                <select id="selectDescuento">
+                    <option value="0">Ninguno (0%)</option>
+                    <option value="0.10">Comunidad (10%)</option>
+                    <option value="0.15">Comunidad (15%)</option>
+                </select>
+
+                <label>¿Con cuánto paga? ($)</label>
+                <input type="number" id="inputEfectivo" placeholder="0.00" min="0" step="0.50">
+            </div>
+
+            <div class="cambio-box" id="txtCambio">Cambio: $0.00</div>
+
+            <button id="btnCompletar" class="btn-completar" disabled>Completar Venta</button>
+        </div>
+    </div>
+
+    <!-- CONTENEDORES PARA IMPRESIÓN DINÁMICA -->
+    <div id="ticket-venta" class="solo-impresion"></div>
+    <div id="ticket-corte" class="solo-impresion"></div>
+
+    <!-- LÓGICA DE PROGRAMACIÓN Y FIREBASE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, updateDoc, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDhXLz6mqKXPsWD5AQmSnYhq0d3GgATxmw",
+            authDomain: "articulos-sr-tila.firebaseapp.com",
+            projectId: "articulos-sr-tila",
+            storageBucket: "articulos-sr-tila.firebasestorage.app",
+            messagingSenderId: "563648337869",
+            appId: "1:563648337869:web:f63b0ec1081ecde06d9684",
+            measurementId: "G-EH8ZM97MRR"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = "index.html";
+            }
+        });
+
+        // Variables del Sistema
+        let carrito = [];
+        let subtotalVenta = 0;
+        let totalConDescuento = 0;
+        let montoDescuento = 0;
+        const PIN_SUPERVISOR = "123456";
+
+        // Referencias UI
+        const inputCodigo = document.getElementById('inputCodigo');
+        const carritoBody = document.getElementById('carritoBody');
+        const txtTotal = document.getElementById('txtTotal');
+        const txtSubtotalInfo = document.getElementById('txtSubtotalInfo');
+        const inputCliente = document.getElementById('inputCliente');
+        const selectDescuento = document.getElementById('selectDescuento');
+        const inputEfectivo = document.getElementById('inputEfectivo');
+        const txtCambio = document.getElementById('txtCambio');
+        const btnCompletar = document.getElementById('btnCompletar');
+        const ticketVentaContenedor = document.getElementById('ticket-venta');
+        const ticketCorteContenedor = document.getElementById('ticket-corte');
+
+        // 1. ESCÁNER
+        inputCodigo.addEventListener('keypress', async (e) => {
+            if (e.key === 'Enter') {
+                const codigo = inputCodigo.value.trim();
+                inputCodigo.value = ""; 
+                if (!codigo) return;
+
+                try {
+                    const docRef = doc(db, "productos", codigo);
+                    const docSnap = await getDoc(docRef);
+
+                    if (docSnap.exists()) {
+                        const producto = docSnap.data();
+                        if(producto.cantidad <= 0) {
+                            alert("¡Cuidado! Este artículo marca 0 existencias en inventario.");
+                        }
+                        agregarAlCarrito(docSnap.id, producto.nombre, parseFloat(producto.precio));
+                    } else {
+                        alert("Código no encontrado. Verifica si el QR está correcto.");
+                    }
+                } catch (error) {
+                    console.error("Error buscando:", error);
+                }
+            }
+        });
+
+        // 2. LÓGICA DEL CARRITO Y DESCUENTOS
+        function agregarAlCarrito(id, nombre, precio) {
+            const existe = carrito.find(item => item.id === id);
+            if (existe) {
+                existe.cantidad += 1;
+            } else {
+                carrito.push({ id, nombre, precio, cantidad: 1 });
+            }
+            actualizarTabla();
+        }
+
+        function actualizarTabla() {
+            carritoBody.innerHTML = "";
+            subtotalVenta = 0;
+
+            carrito.forEach((item, index) => {
+                const subtotal = item.precio * item.cantidad;
+                subtotalVenta += subtotal;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight:bold;">${item.nombre}</td>
+                    <td>$${item.precio.toFixed(2)}</td>
+                    <td><input type="number" class="qty-input" value="${item.cantidad}" min="1" data-index="${index}"></td>
+                    <td>$${subtotal.toFixed(2)}</td>
+                    <td><button class="btn-remove" data-index="${index}">X</button></td>
+                `;
+                carritoBody.appendChild(tr);
+            });
+
+            btnCompletar.disabled = carrito.length === 0;
+
+            document.querySelectorAll('.qty-input').forEach(input => {
+                input.addEventListener('change', (e) => {
+                    const i = e.target.getAttribute('data-index');
+                    carrito[i].cantidad = parseInt(e.target.value) || 1;
+                    actualizarTabla();
+                });
+            });
+
+            document.querySelectorAll('.btn-remove').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const i = e.target.getAttribute('data-index');
+                    carrito.splice(i, 1);
+                    actualizarTabla();
+                });
+            });
+
+            calcularTotales();
+        }
+
+        selectDescuento.addEventListener('change', calcularTotales);
+
+        function calcularTotales() {
+            const porcentaje = parseFloat(selectDescuento.value);
+            montoDescuento = subtotalVenta * porcentaje;
+            totalConDescuento = subtotalVenta - montoDescuento;
+
+            txtTotal.innerText = `$${totalConDescuento.toFixed(2)}`;
+            
+            if (porcentaje > 0) {
+                txtSubtotalInfo.innerText = `Subtotal original: $${subtotalVenta.toFixed(2)}`;
+            } else {
+                txtSubtotalInfo.innerText = "";
+            }
+
+            calcularCambio();
+        }
+
+        // 3. CALCULAR CAMBIO
+        inputEfectivo.addEventListener('input', calcularCambio);
+
+        function calcularCambio() {
+            const efectivo = parseFloat(inputEfectivo.value) || 0;
+            const cambio = efectivo - totalConDescuento;
+            
+            if (efectivo > 0 && cambio >= 0) {
+                txtCambio.innerText = `Cambio: $${cambio.toFixed(2)}`;
+                txtCambio.style.color = "#28a745";
+            } else {
+                txtCambio.innerText = `Cambio: $0.00`;
+                txtCambio.style.color = "#dc3545";
+            }
+        }
+
+        // 4. COMPLETAR VENTA E IMPRIMIR 2 TICKETS
+        btnCompletar.addEventListener('click', async () => {
+            const efectivo = parseFloat(inputEfectivo.value) || 0;
+            if (efectivo < totalConDescuento) {
+                alert("El efectivo ingresado no es suficiente para cubrir el total.");
+                return;
+            }
+
+            btnCompletar.disabled = true;
+            btnCompletar.innerText = "Procesando...";
+
+            try {
+                // Generar número de operación (los últimos 6 dígitos de la marca de tiempo)
+                const numOperacion = Date.now().toString().slice(-6);
+
+                // Descontar inventario
+                for (const item of carrito) {
+                    const docRef = doc(db, "productos", item.id);
+                    const docSnap = await getDoc(docRef);
+                    if(docSnap.exists()) {
+                        const stockActual = docSnap.data().cantidad;
+                        const nuevoStock = stockActual - item.cantidad;
+                        await updateDoc(docRef, { cantidad: nuevoStock < 0 ? 0 : nuevoStock });
+                    }
+                }
+
+                // Guardar venta con número de operación
+                const fechaActual = new Date();
+                const fechaString = fechaActual.toLocaleDateString();
+                const horaString = fechaActual.toLocaleTimeString();
+                
+                await addDoc(collection(db, "ventas"), {
+                    num_operacion: numOperacion,
+                    fecha: fechaString,
+                    hora: horaString,
+                    subtotal: subtotalVenta,
+                    descuento_aplicado: montoDescuento,
+                    total: totalConDescuento,
+                    cliente: inputCliente.value.trim() || "Público en general",
+                    articulos: carrito
+                });
+
+                // Armar e imprimir ticket doble
+                armarTicketDoble(fechaString, horaString, numOperacion, efectivo);
+                
+                ticketVentaContenedor.classList.add('mostrar-impresion');
+                window.print();
+                ticketVentaContenedor.classList.remove('mostrar-impresion');
+
+                // Limpiar sistema
+                carrito = [];
+                inputCliente.value = "";
+                selectDescuento.value = "0";
+                inputEfectivo.value = "";
+                montoDescuento = 0;
+                totalConDescuento = 0;
+                actualizarTabla();
+                btnCompletar.innerText = "Completar Venta";
+                inputCodigo.focus();
+
+            } catch (error) {
+                console.error("Error procesando venta:", error);
+                alert("Error al completar la venta. Revisa la conexión.");
+                btnCompletar.disabled = false;
+                btnCompletar.innerText = "Completar Venta";
+            }
+        });
+
+        // Función que dibuja el HTML del ticket dinámicamente
+        function armarTicketDoble(fecha, hora, numOperacion, efectivo) {
+            const nombreCliente = inputCliente.value.trim() || "Público en general";
+            let filasArticulos = "";
+            
+            carrito.forEach(item => {
+                filasArticulos += `<tr><td>${item.cantidad}</td><td>${item.nombre.substring(0, 15)}</td><td class="right">$${(item.precio * item.cantidad).toFixed(2)}</td></tr>`;
+            });
+
+            // Plantilla de un ticket individual
+            const plantillaTicket = (tipoCopia) => `
+                <div class="ticket-header">
+                    <h2>Tienda Santa Lucía</h2>
+                    <p>*** ${tipoCopia} ***</p>
+                    <p>San Cristóbal de las Casas, Chiapas</p>
+                    <p>Tel: 000-000-0000</p>
+                    <p style="margin-top: 5px;"><strong>Operación: ${numOperacion}</strong></p>
+                    <p>Fecha: ${fecha} ${hora}</p>
+                    <p>Cliente: ${nombreCliente}</p>
+                </div>
+                
+                <table class="ticket-table">
+                    <thead><tr><th>Cant</th><th>Artículo</th><th class="right">Total</th></tr></thead>
+                    <tbody>${filasArticulos}</tbody>
+                </table>
+                
+                <div class="ticket-totals">
+                    Subtotal: $${subtotalVenta.toFixed(2)}<br>
+                    ${montoDescuento > 0 ? `<div class="desc-linea">Desc. Cliente Distinguido: -$${montoDescuento.toFixed(2)}</div>` : ''}
+                    Total a Pagar: $${totalConDescuento.toFixed(2)}<br>
+                    Efectivo: $${efectivo.toFixed(2)}<br>
+                    Cambio: $${(efectivo - totalConDescuento).toFixed(2)}
+                </div>
+                
+                <div class="ticket-footer">
+                    <p>¡Gracias por su preferencia!</p>
+                </div>
+            `;
+
+            // Insertamos las dos copias separadas por una línea de corte
+            ticketVentaContenedor.innerHTML = 
+                plantillaTicket("COPIA CLIENTE") + 
+                '<div style="border-top: 2px dashed #000; margin: 30px 0; text-align:center; font-size:10px;">-- CORTE AQUÍ --</div>' + 
+                plantillaTicket("COPIA TIENDA");
+        }
+
+        // 5. CORTE DE CAJA CON HISTORIAL DE OPERACIONES
+        document.getElementById('btnCorte').addEventListener('click', async () => {
+            const pinIngresado = prompt("Módulo Restringido.\nIngrese el PIN de Supervisor (6 dígitos):");
+            
+            if (pinIngresado !== PIN_SUPERVISOR) {
+                alert("PIN incorrecto. Acceso denegado.");
+                return;
+            }
+
+            const fechaActual = new Date();
+            const fechaHoy = fechaActual.toLocaleDateString();
+            const horaActual = fechaActual.toLocaleTimeString();
+            
+            let totalCorte = 0;
+            let totalArticulos = 0;
+            let ventasHoy = [];
+
+            try {
+                // Consultamos las ventas
+                const querySnapshot = await getDocs(collection(db, "ventas"));
+                querySnapshot.forEach((doc) => {
+                    const venta = doc.data();
+                    if (venta.fecha === fechaHoy) {
+                        totalCorte += venta.total;
+                        ventasHoy.push(venta);
+                        
+                        venta.articulos.forEach(item => {
+                            totalArticulos += item.cantidad;
+                        });
+                    }
+                });
+
+                // Armar las filas del historial
+                let filasHistorial = "";
+                ventasHoy.forEach(v => {
+                    filasHistorial += `<tr><td>${v.num_operacion || "S/N"}</td><td>${v.hora}</td><td class="right">$${v.total.toFixed(2)}</td></tr>`;
+                });
+
+                // Dibujar el HTML del ticket de corte
+                ticketCorteContenedor.innerHTML = `
+                    <div class="ticket-header">
+                        <h2>Tienda Santa Lucía</h2>
+                        <p>*** CORTE DE CAJA ***</p>
+                        <p>Fecha: ${fechaHoy} ${horaActual}</p>
+                    </div>
+                    
+                    <h3 style="font-size: 13px; margin-bottom: 5px; text-align: center; border-top: 1px dashed #000; padding-top: 10px;">Historial de Operaciones</h3>
+                    <table class="ticket-table" style="margin-bottom: 15px;">
+                        <thead><tr><th>Folio</th><th>Hora</th><th class="right">Total</th></tr></thead>
+                        <tbody>${filasHistorial || '<tr><td colspan="3" style="text-align:center;">Sin ventas registradas hoy</td></tr>'}</tbody>
+                    </table>
+
+                    <div style="border-top: 1px dashed #000; border-bottom: 1px dashed #000; margin: 10px 0; padding: 10px 0;">
+                        <p>Total de Operaciones: <strong style="float:right;">${ventasHoy.length}</strong></p>
+                        <p>Total de Artículos: <strong style="float:right;">${totalArticulos}</strong></p>
+                        <h3 style="margin: 15px 0 5px 0; text-align:center;">TOTAL EN CAJA: $${totalCorte.toFixed(2)}</h3>
+                    </div>
+                    
+                    <div class="firma-corte">
+                        <p>_______________________</p>
+                        <p>Firma de conformidad</p>
+                    </div>
+                `;
+
+                // Imprimir el corte
+                ticketCorteContenedor.classList.add('mostrar-impresion');
+                window.print();
+                ticketCorteContenedor.classList.remove('mostrar-impresion');
+                
+            } catch (error) {
+                console.error("Error en corte:", error);
+                alert("Error al calcular el corte de caja.");
+            }
+        });
+
+    </script>
+</body>
+</html>
