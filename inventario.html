@@ -520,25 +520,38 @@
             asignarEventosBotones();
         }
 
+        // =========================================================
+        // PROCESO DE GUARDADO Y ACTUALIZACIÓN CORRECTO
+        // =========================================================
         btnSave.addEventListener('click', async () => {
             const nombre = nombreInput.value.trim();
             const descripcion = descripcionInput.value.trim();
-            const cantidad = parseInt(cantidadInput.value);
-            const precio = parseFloat(precioInput.value);
+            
+            // Validar y asegurar que los números sean correctos y no NaN
+            const cantidad = parseInt(cantidadInput.value, 10) || 0;
+            const precio = parseFloat(precioInput.value) || 0.0;
             const editingId = editingIdInput.value;
 
-            if (!nombre || isNaN(cantidad) || isNaN(precio)) {
-                alert("Por favor, llena correctamente los campos obligatorios.");
+            // El único campo estrictamente obligatorio para la interfaz es el nombre
+            if (!nombre) {
+                alert("Por favor, ingresa el nombre de la pieza.");
                 return;
             }
 
-            const datosProducto = { nombre, descripcion, cantidad, precio };
+            const datosProducto = { 
+                nombre: nombre, 
+                descripcion: descripcion, 
+                cantidad: cantidad, 
+                precio: precio 
+            };
 
             try {
                 if (editingId === "") {
+                    // Crear nuevo documento
                     await addDoc(productosCollection, datosProducto);
                     alert("Pieza registrada con éxito.");
                 } else {
+                    // Actualizar documento existente
                     const docRef = doc(db, "productos", editingId);
                     await updateDoc(docRef, datosProducto);
                     alert("Información actualizada.");
@@ -546,8 +559,9 @@
                 }
                 limpiarFormulario();
             } catch (error) {
-                console.error("Error:", error);
-                alert("Hubo un error al guardar.");
+                // Muestra el error detallado en la consola del navegador (F12)
+                console.error("Error completo de Firebase:", error);
+                alert("Hubo un error al guardar. Detalles: " + error.message);
             }
         });
 
