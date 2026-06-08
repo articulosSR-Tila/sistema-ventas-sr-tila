@@ -6,10 +6,13 @@
     <title>Control de Existencias | Sistema Santa Lucía</title>
     
     <style>
-        /* ESTILOS GLOBALES ORIGINALES */
+        /* ESTILOS GLOBALES MODERNIZADOS */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
             margin: 0;
             padding: 20px;
             display: flex;
@@ -22,37 +25,40 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
             background-color: #ffffff;
-            padding: 15px 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            padding: 16px 32px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e2e8f0;
         }
 
         .header h1 {
             margin: 0;
             font-size: 24px;
-            color: #333;
+            font-weight: 700;
+            color: #0f172a;
         }
 
         .btn-back {
             padding: 10px 20px;
-            background-color: #6c757d;
+            background-color: #64748b;
             color: white;
             text-decoration: none;
-            border-radius: 6px;
-            font-weight: bold;
+            border-radius: 8px;
+            font-weight: 600;
             font-size: 14px;
-            transition: background 0.3s;
+            transition: all 0.2s ease;
         }
 
         .btn-back:hover {
-            background-color: #5a6268;
+            background-color: #475569;
+            transform: translateY(-1px);
         }
 
         .main-content {
             display: flex;
-            gap: 20px;
+            gap: 24px;
             flex: 1;
             min-height: 0;
         }
@@ -60,83 +66,105 @@
         /* Panel Izquierdo: Formulario */
         .form-panel {
             background-color: #ffffff;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            width: 320px;
+            padding: 28px;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+            border: 1px solid #e2e8f0;
+            width: 340px;
             flex-shrink: 0;
             box-sizing: border-box;
+            overflow-y: auto;
         }
 
         .form-panel h3 {
             margin-top: 0;
-            margin-bottom: 20px;
-            color: #0056b3;
+            margin-bottom: 24px;
+            color: #2563eb;
             font-size: 18px;
-            border-bottom: 2px solid #f0f2f5;
-            padding-bottom: 10px;
+            font-weight: 600;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 12px;
         }
 
         label {
             display: block;
             font-size: 13px;
-            color: #555;
-            margin-bottom: 5px;
-            font-weight: bold;
+            color: #475569;
+            margin-bottom: 6px;
+            font-weight: 600;
         }
 
         input, textarea, select {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 18px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
             box-sizing: border-box;
             font-size: 14px;
             font-family: inherit;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            background-color: #f8fafc;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            background-color: #ffffff;
         }
 
         textarea {
-            resize: none;
-            height: 70px;
+            resize: vertical;
+            height: 80px;
         }
 
         .btn-save {
             width: 100%;
-            padding: 12px;
-            background-color: #0056b3;
+            padding: 14px;
+            background-color: #2563eb;
             color: white;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 15px;
-            font-weight: bold;
+            font-weight: 600;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
         }
 
         .btn-save:hover {
-            background-color: #004494;
+            background-color: #1d4ed8;
+            transform: translateY(-1px);
         }
 
         .btn-cancel {
             width: 100%;
-            padding: 8px;
-            background-color: #e2e3e5;
-            color: #383d41;
-            border: none;
-            border-radius: 6px;
-            font-size: 13px;
-            margin-top: 5px;
+            padding: 12px;
+            background-color: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-top: 10px;
             cursor: pointer;
             display: none;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-cancel:hover {
+            background-color: #e2e8f0;
+            color: #1e293b;
         }
 
         /* Panel Derecho: Tabla y Buscador */
         .table-panel {
             background-color: #ffffff;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            padding: 28px;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+            border: 1px solid #e2e8f0;
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -144,43 +172,40 @@
         }
 
         .search-container {
-            margin-bottom: 20px;
+            margin-bottom: 24px;
             display: flex;
-            gap: 10px;
+            gap: 16px;
             align-items: center;
             justify-content: space-between;
         }
 
         .search-group {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             flex: 1;
         }
 
         .print-group {
             display: flex;
-            gap: 10px;
+            gap: 12px;
         }
 
         .search-bar {
-            padding: 12px 15px;
-            border: 2px solid #e9ecef;
+            padding: 12px 16px;
+            border: 1px solid #cbd5e1;
             border-radius: 8px;
-            font-size: 15px;
+            font-size: 14px;
             box-sizing: border-box;
             margin-bottom: 0;
-        }
-
-        .search-bar:focus {
-            border-color: #0056b3;
-            outline: none;
+            background-color: #ffffff;
         }
 
         .table-wrapper {
             overflow-y: auto;
             flex: 1;
-            border: 1px solid #e9ecef;
-            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background-color: #ffffff;
         }
 
         table {
@@ -191,52 +216,91 @@
         }
 
         th {
-            background-color: #f8f9fa;
-            color: #495057;
-            padding: 12px;
-            font-weight: bold;
-            border-bottom: 2px solid #dee2e6;
+            background-color: #f8fafc;
+            color: #475569;
+            padding: 14px 16px;
+            font-weight: 600;
+            border-bottom: 1px solid #e2e8f0;
             position: sticky;
             top: 0;
             z-index: 1;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.05em;
         }
 
         td {
-            padding: 12px;
-            border-bottom: 1px solid #dee2e6;
+            padding: 14px 16px;
+            border-bottom: 1px solid #e2e8f0;
             vertical-align: middle;
+            color: #334155;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
         }
 
         tr:hover {
-            background-color: #f8f9fa;
+            background-color: #f1f5f9;
         }
 
         .qr-img {
-            width: 60px;
-            height: 60px;
-            background-color: #eee;
-            border-radius: 4px;
+            width: 50px;
+            height: 50px;
+            background-color: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
             display: block;
+            padding: 2px;
+            transition: transform 0.2s ease;
+        }
+        
+        .qr-img:hover {
+            transform: scale(1.1);
+        }
+
+        .precio-badge {
+            background-color: #dcfce7;
+            color: #166534;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-weight: 600;
+            display: inline-block;
         }
 
         .actions-cell {
             display: flex;
-            gap: 5px;
+            gap: 8px;
         }
 
         .btn-action {
-            padding: 6px 10px;
+            padding: 8px 12px;
             border: none;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
             cursor: pointer;
+            transition: all 0.2s ease;
         }
 
-        .btn-edit { background-color: #ffc107; color: #000; }
-        .btn-delete { background-color: #dc3545; color: white; }
-        .btn-print-sel { background-color: #17a2b8; color: white; padding: 10px 15px; font-size: 14px;}
-        .btn-print-all { background-color: #28a745; color: white; padding: 10px 15px; font-size: 14px;}
+        .btn-edit { background-color: #fef08a; color: #854d0e; }
+        .btn-edit:hover { background-color: #fde047; }
+        
+        .btn-delete { background-color: #fee2e2; color: #991b1b; }
+        .btn-delete:hover { background-color: #fecaca; }
+        
+        .btn-print-sel { background-color: #0ea5e9; color: white; padding: 10px 16px; font-size: 14px; box-shadow: 0 2px 4px rgba(14, 165, 233, 0.2);}
+        .btn-print-sel:hover { background-color: #0284c7; }
+        
+        .btn-print-all { background-color: #10b981; color: white; padding: 10px 16px; font-size: 14px; box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);}
+        .btn-print-all:hover { background-color: #059669; }
+
+        input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: #2563eb;
+        }
 
         /* ESTILOS EXCLUSIVOS PARA IMPRESIÓN (PDF) */
         #printArea {
@@ -255,7 +319,7 @@
             #printArea {
                 display: flex;
                 flex-wrap: wrap;
-                gap: 0.5cm; /* Separación entre etiquetas */
+                gap: 0.5cm;
                 position: absolute;
                 left: 0;
                 top: 0;
@@ -268,9 +332,9 @@
             .etiqueta-print {
                 display: flex;
                 align-items: center;
-                width: 6.5cm; /* 2.5cm QR + 4cm Texto */
+                width: 6.5cm;
                 height: 2.5cm;
-                border: 1px dashed #ccc; /* Guía para recortar */
+                border: 1px dashed #ccc;
                 box-sizing: border-box;
                 padding: 0.1cm;
                 page-break-inside: avoid;
@@ -348,6 +412,7 @@
                             <th>Código QR</th>
                             <th>Nombre</th>
                             <th>Descripción</th>
+                            <th>Precio</th>
                             <th>Existencias</th>
                             <th>Cant. Etiquetas</th>
                             <th>Acciones</th>
@@ -417,16 +482,17 @@
 
         function renderTable(datos) {
             tableBody.innerHTML = "";
-            chkSelectAll.checked = false; // Reiniciar el master checkbox
+            chkSelectAll.checked = false; 
             
             if (datos.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#888;">No se encontraron artículos.</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#94a3b8; padding: 30px;">No se encontraron artículos.</td></tr>`;
                 return;
             }
 
             datos.forEach((item) => {
                 const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${item.id}`;
-                const estiloAgotado = item.cantidad === 0 ? 'color: #dc3545; font-weight: bold;' : '';
+                const estiloAgotado = item.cantidad === 0 ? 'color: #ef4444; font-weight: 700;' : 'font-weight: 600;';
+                const precioMostrado = item.precio ? parseFloat(item.precio).toFixed(2) : '0.00';
                 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -436,11 +502,12 @@
                             <img src="${qrUrl}" class="qr-img" alt="QR">
                         </a>
                     </td>
-                    <td style="font-weight: bold;">${item.nombre}</td>
-                    <td style="color: #666; max-width: 250px;">${item.descripcion || 'Sin descripción'}</td>
+                    <td style="font-weight: 600; color: #0f172a;">${item.nombre}</td>
+                    <td style="color: #64748b; max-width: 250px;">${item.descripcion || 'Sin descripción'}</td>
+                    <td><span class="precio-badge">$${precioMostrado}</span></td>
                     <td style="${estiloAgotado}">${item.cantidad} pzas</td>
                     <td>
-                        <input type="number" class="print-qty" data-id="${item.id}" value="1" min="1" style="width: 60px; margin-bottom: 0; padding: 6px;">
+                        <input type="number" class="print-qty" data-id="${item.id}" value="1" min="1" style="width: 70px; margin-bottom: 0; padding: 8px;">
                     </td>
                     <td class="actions-cell">
                         <button class="btn-action btn-edit" data-id="${item.id}">Editar</button>
@@ -496,7 +563,7 @@
                         nombreInput.value = producto.nombre;
                         descripcionInput.value = producto.descripcion;
                         cantidadInput.value = producto.cantidad;
-                        precioInput.value = producto.precio;
+                        precioInput.value = producto.precio || 0;
                         
                         btnSave.innerText = "Guardar Cambios";
                         btnCancel.style.display = "block";
@@ -550,20 +617,14 @@
 
         btnCancel.addEventListener('click', cancelarEdicion);
 
-        /* =========================================
-           LÓGICA DE IMPRESIÓN Y SELECCIÓN (ATLON)
-        ========================================= */
-
-        // Checkbox maestro para seleccionar/deseleccionar todos
         chkSelectAll.addEventListener('change', (e) => {
             const isChecked = e.target.checked;
             document.querySelectorAll('.chk-item').forEach(chk => chk.checked = isChecked);
         });
 
-        // Función constructora del PDF nativo
         function ejecutarImpresion(itemsAImprimir) {
             const printArea = document.getElementById('printArea');
-            printArea.innerHTML = ''; // Limpiar buffer
+            printArea.innerHTML = ''; 
 
             if(itemsAImprimir.length === 0) {
                 alert("No has seleccionado artículos o no hay artículos en la tabla.");
@@ -574,7 +635,6 @@
                 const producto = listaProductos.find(p => p.id === item.id);
                 if (producto) {
                     for (let i = 0; i < item.cantidad; i++) {
-                        // Generamos el QR a buena resolución
                         const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${producto.id}`;
                         
                         const etiqueta = document.createElement('div');
@@ -588,13 +648,11 @@
                 }
             });
 
-            // Esperar 1.5 segundos (1500 ms) para que los QR se descarguen antes de abrir la vista previa
             setTimeout(() => {
                 window.print();
             }, 1500);
         }
 
-        // Evento: Imprimir Seleccionados
         document.getElementById('btnImprimirSel').addEventListener('click', () => {
             const checkboxes = document.querySelectorAll('.chk-item:checked');
             const items = Array.from(checkboxes).map(chk => {
@@ -608,9 +666,7 @@
             ejecutarImpresion(items);
         });
 
-        // Evento: Imprimir Todos los de la vista actual
         document.getElementById('btnImprimirTodos').addEventListener('click', () => {
-            // Toma todos los que estén actualmente renderizados en la tabla
             const filas = document.querySelectorAll('#inventoryTableBody tr');
             const items = [];
             
