@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso | Sistema Santa Lucía</title>
+    <title>Acceso | Artículos Religiosos Sr. de Tila</title>
     
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            /* Degradado elegante de fondo */
+            background: linear-gradient(135deg, #eef2f7 0%, #d9e2ec 100%);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -18,82 +19,125 @@
 
         .login-container {
             background-color: #ffffff;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 45px 40px;
+            border-radius: 12px;
+            /* Sombra más suave y profunda para un efecto flotante elegante */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
             text-align: center;
             width: 100%;
-            max-width: 350px;
+            max-width: 420px; /* Un poco más ancho para albergar bien el título */
+            border-top: 5px solid #1a365d; /* Línea superior azul marino elegante */
+        }
+
+        .bienvenida {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #7b8794;
+            margin-bottom: 8px;
+            font-weight: 600;
         }
 
         h1 {
-            font-size: 24px;
-            color: #333333;
-            margin-bottom: 5px;
+            font-size: 22px;
+            color: #1a365d; /* Azul corporativo/institucional profundo */
+            margin: 0 0 5px 0;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .sucursal {
+            font-size: 14px;
+            color: #9b7c1e; /* Dorado sutil para el giro religioso/elegante */
+            margin: 0 0 30px 0;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .linea-divisoria {
+            height: 1px;
+            background: #e4e7eb;
+            margin-bottom: 25px;
         }
 
         h2 {
-            font-size: 16px;
-            color: #666666;
+            font-size: 18px;
+            color: #334e68;
             margin-top: 0;
-            margin-bottom: 25px;
-            font-weight: normal;
+            margin-bottom: 20px;
+            font-weight: 600;
         }
 
         label {
             display: block;
             text-align: left;
-            font-size: 14px;
-            color: #555555;
-            margin-bottom: 5px;
+            font-size: 13px;
+            color: #486581;
+            margin-bottom: 6px;
+            font-weight: 600;
         }
 
         input {
             width: 100%;
-            padding: 12px;
-            margin-bottom: 20px;
-            border: 1px solid #cccccc;
-            border-radius: 6px;
+            padding: 14px;
+            margin-bottom: 22px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
             box-sizing: border-box;
             font-size: 14px;
+            background-color: #f8fafc;
+            transition: all 0.3s;
         }
 
         input:focus {
-            border-color: #0056b3;
+            border-color: #1a365d;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(26, 54, 93, 0.1);
             outline: none;
         }
 
         button {
             width: 100%;
-            padding: 12px;
-            background-color: #0056b3;
+            padding: 14px;
+            background-color: #1a365d;
             color: white;
             border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: bold;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s;
+            letter-spacing: 0.5px;
+            transition: background-color 0.3s, transform 0.1s;
+            margin-top: 5px;
         }
 
         button:hover {
-            background-color: #004494;
+            background-color: #102a43;
+        }
+
+        button:active {
+            transform: scale(0.99);
         }
     </style>
 </head>
 <body>
 
     <div class="login-container">
-        <h1>Sistema Santa Lucía</h1>
+        <div class="bienvenida">¡Bienvenido!</div>
+        <h1>Sistema de Administración de Inventario y Ventas</h1>
+        <div class="sucursal">Artículos Religiosos Sr. de Tila<br><small style="color: #627d98;">Sucursal Santa Lucía</small></div>
+        
+        <div class="linea-divisoria"></div>
+        
         <h2>Inicio de Sesión</h2>
         
-        <label for="email">Correo electrónico</label>
-        <input type="email" id="email" placeholder="ejemplo@correo.com">
+        <label for="email">Ingresa correo</label>
+        <input type="email" id="email" placeholder="correo@ejemplo.com">
         
-        <label for="password">Contraseña</label>
-        <input type="password" id="password" placeholder="Tu contraseña">
+        <label for="password">Ingresa contraseña</label>
+        <input type="password" id="password" placeholder="••••••••">
         
-        <button id="btnLogin">Ingresar</button>
+        <button id="btnLogin">Ingresar al Sistema</button>
     </div>
 
     <script type="module">
@@ -102,7 +146,7 @@
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-analytics.js";
         import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
 
-        // Tu configuración exacta
+        // Configuración exacta del proyecto
         const firebaseConfig = {
             apiKey: "AIzaSyDhXLz6mqKXPsWD5AQmSnYhq0d3GgATxmw",
             authDomain: "articulos-sr-tila.firebaseapp.com",
@@ -130,7 +174,8 @@
 
             signInWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
-                    // Redirigir al menú principal
+                    // Redirigir al menú principal. 
+                    // En menu.html validaremos el rol desde Firestore para ocultar/mostrar opciones.
                     window.location.href = "menu.html";
                 })
                 .catch((error) => {
