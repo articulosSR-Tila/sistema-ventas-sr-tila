@@ -5,38 +5,79 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Punto de Venta | Sistema Santa Lucía</title>
     
+    <!-- Fuente elegante de Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
         /* ESTILOS DE LA PANTALLA (NO SE IMPRIMEN) */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
+            font-family: 'Inter', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f8;
             margin: 0;
             padding: 20px;
             display: flex;
             flex-direction: column;
             height: 100vh;
             box-sizing: border-box;
+            color: #2c3e50;
         }
 
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             background-color: #ffffff;
-            padding: 15px 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            padding: 18px 35px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            border: 1px solid #eaeaea;
         }
 
-        .header h1 { margin: 0; font-size: 24px; color: #333; }
-        .btn-back { padding: 10px 20px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; }
-        .btn-back:hover { background-color: #5a6268; }
-        .btn-corte { padding: 10px 20px; background-color: #ffc107; color: #000; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-right: 10px; }
+        .header h1 { 
+            margin: 0; 
+            font-size: 22px; 
+            font-weight: 600;
+            color: #1a252f; 
+            letter-spacing: -0.5px;
+        }
+        
+        .btn-back { 
+            padding: 10px 22px; 
+            background-color: #eef2f5; 
+            color: #4a5568; 
+            text-decoration: none; 
+            border-radius: 8px; 
+            font-weight: 500; 
+            transition: all 0.2s ease;
+        }
+        .btn-back:hover { 
+            background-color: #e2e8f0; 
+            color: #1a202c;
+        }
+        
+        .btn-corte { 
+            padding: 10px 22px; 
+            background-color: #f39c12; 
+            color: #ffffff; 
+            border: none; 
+            border-radius: 8px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            margin-right: 15px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(243, 156, 18, 0.3);
+        }
+        .btn-corte:hover { 
+            background-color: #e67e22; 
+            box-shadow: 0 4px 12px rgba(230, 126, 34, 0.4);
+        }
 
         .main-content {
             display: flex;
-            gap: 20px;
+            gap: 25px;
             flex: 1;
             min-height: 0;
         }
@@ -45,78 +86,188 @@
         .left-panel {
             flex: 2;
             background-color: #ffffff;
-            padding: 25px;
-            border-radius: 10px;
+            padding: 30px;
+            border-radius: 12px;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            border: 1px solid #eaeaea;
         }
 
-        .search-box { margin-bottom: 20px; }
-        .search-box input { width: 100%; padding: 15px; font-size: 18px; border: 2px solid #0056b3; border-radius: 8px; box-sizing: border-box; }
+        .search-box { margin-bottom: 25px; }
+        .search-box input { 
+            width: 100%; 
+            padding: 16px 20px; 
+            font-size: 16px; 
+            font-family: 'Inter', sans-serif;
+            border: 1px solid #dcdfe6; 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            background-color: #fcfcfc;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .search-box input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
         
-        .table-wrapper { flex: 1; overflow-y: auto; border: 1px solid #e9ecef; border-radius: 6px; }
+        .table-wrapper { 
+            flex: 1; 
+            overflow-y: auto; 
+            border: 1px solid #edf2f7; 
+            border-radius: 8px; 
+        }
         table { width: 100%; border-collapse: collapse; text-align: left; }
-        th { background-color: #f8f9fa; padding: 12px; border-bottom: 2px solid #dee2e6; position: sticky; top: 0; }
-        td { padding: 12px; border-bottom: 1px solid #dee2e6; vertical-align: middle; }
+        th { 
+            background-color: #f8fafc; 
+            padding: 15px; 
+            border-bottom: 1px solid #e2e8f0; 
+            position: sticky; 
+            top: 0; 
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        td { 
+            padding: 15px; 
+            border-bottom: 1px solid #edf2f7; 
+            vertical-align: middle; 
+            color: #2d3748;
+            font-size: 15px;
+        }
         
-        .btn-remove { background-color: #dc3545; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; }
-        .qty-input { width: 60px; padding: 5px; text-align: center; border: 1px solid #ccc; border-radius: 4px; }
+        .btn-remove { 
+            background-color: #fff; 
+            color: #e53e3e; 
+            border: 1px solid #feb2b2; 
+            padding: 6px 12px; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-remove:hover {
+            background-color: #fff5f5;
+            border-color: #fc8181;
+        }
+
+        .qty-input { 
+            width: 60px; 
+            padding: 8px; 
+            text-align: center; 
+            border: 1px solid #cbd5e0; 
+            border-radius: 6px; 
+            font-family: 'Inter', sans-serif;
+        }
 
         /* Panel Derecho: Cobro */
         .right-panel {
             flex: 1;
             background-color: #ffffff;
-            padding: 25px;
-            border-radius: 10px;
+            padding: 30px;
+            border-radius: 12px;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            border: 1px solid #eaeaea;
             overflow-y: auto;
         }
 
-        .total-box { background-color: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px; border: 2px solid #e9ecef; }
-        .total-box h2 { margin: 0; font-size: 20px; color: #666; }
-        .total-box .gran-total { font-size: 48px; color: #28a745; margin: 10px 0; font-weight: bold; }
-        .total-box .subtotal-info { font-size: 14px; color: #888; margin-top: 5px; }
+        .total-box { 
+            background-color: #f8fafc; 
+            padding: 25px; 
+            border-radius: 10px; 
+            text-align: center; 
+            margin-bottom: 25px; 
+            border: 1px solid #edf2f7; 
+        }
+        .total-box h2 { 
+            margin: 0; 
+            font-size: 16px; 
+            color: #718096; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        .total-box .gran-total { 
+            font-size: 48px; 
+            color: #2c3e50; 
+            margin: 10px 0; 
+            font-weight: 700; 
+            letter-spacing: -1px;
+        }
+        .total-box .subtotal-info { font-size: 14px; color: #a0aec0; margin-top: 5px; }
 
-        .payment-box label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 15px; }
-        .payment-box input, .payment-box select { width: 100%; padding: 12px; font-size: 18px; margin-bottom: 15px; border: 2px solid #ccc; border-radius: 8px; box-sizing: border-box; }
-        .payment-box input[type="number"] { font-size: 20px; text-align: center; }
+        .payment-box label { 
+            display: block; 
+            font-weight: 500; 
+            margin-bottom: 8px; 
+            font-size: 14px; 
+            color: #4a5568;
+        }
+        .payment-box input, .payment-box select { 
+            width: 100%; 
+            padding: 14px; 
+            font-size: 16px; 
+            font-family: 'Inter', sans-serif;
+            margin-bottom: 20px; 
+            border: 1px solid #e2e8f0; 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            background-color: #fdfdfd;
+            transition: border-color 0.3s;
+        }
+        .payment-box input:focus, .payment-box select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        .payment-box input[type="number"] { 
+            font-size: 22px; 
+            text-align: center; 
+            font-weight: 600;
+            color: #2c3e50;
+        }
         
-        .cambio-box { text-align: center; font-size: 24px; color: #0056b3; font-weight: bold; margin-bottom: 20px; }
+        .cambio-box { 
+            text-align: center; 
+            font-size: 24px; 
+            color: #34495e; 
+            font-weight: 700; 
+            margin-bottom: 25px; 
+            padding: 15px;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #edf2f7;
+        }
 
-        .btn-completar { background-color: #28a745; color: white; border: none; padding: 20px; border-radius: 8px; font-size: 20px; font-weight: bold; cursor: pointer; transition: 0.3s; width: 100%; }
-        .btn-completar:hover { background-color: #218838; }
-        .btn-completar:disabled { background-color: #6c757d; cursor: not-allowed; }
-@media (max-width: 768px) {
-    body {
-        height: auto; /* Permite que la pantalla crezca hacia abajo si es necesario */
-        overflow-y: auto;
-    }
+        .btn-completar { 
+            background-color: #2ecc71; 
+            color: white; 
+            border: none; 
+            padding: 20px; 
+            border-radius: 10px; 
+            font-size: 18px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            width: 100%; 
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+        }
+        .btn-completar:hover { 
+            background-color: #27ae60; 
+            box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+            transform: translateY(-2px);
+        }
+        .btn-completar:disabled { 
+            background-color: #a0aec0; 
+            box-shadow: none;
+            cursor: not-allowed; 
+            transform: translateY(0);
+        }
 
-    .main-content {
-        flex-direction: column; /* Apila el formulario arriba y la tabla abajo */
-    }
-
-    .form-panel {
-        width: 100%; /* El formulario toma todo el ancho del celular */
-        box-sizing: border-box;
-    }
-
-    .table-panel {
-        width: 100%; /* La tabla toma todo el ancho del celular */
-        box-sizing: border-box;
-    }
-    
-    .search-container {
-        flex-direction: column; /* La barra de búsqueda y el filtro de agotados se apilan */
-    }
-    
-    .search-bar {
-        width: 100% !important; /* Ambos toman todo el ancho disponible */
-    }
-}
         /* ========================================= */
         /* ESTILOS EXCLUSIVOS PARA IMPRESORA TÉRMICA */
         /* ========================================= */
@@ -152,7 +303,7 @@
 
     <!-- INTERFAZ DEL PUNTO DE VENTA (NO SE IMPRIME) -->
     <div class="header no-imprimir">
-        <h1>Punto de Venta --- Sucursal Sta Lucia. Articulos Religiosos Sr de Tila</h1>
+        <h1>Punto de Venta Articulos Religiosos Sr de Tila.</h1>
         <div>
             <button id="btnCorte" class="btn-corte">Corte de Caja</button>
             <a href="menu.html" class="btn-back">Volver al Menú</a>
@@ -244,7 +395,7 @@
         let subtotalVenta = 0;
         let totalConDescuento = 0;
         let montoDescuento = 0;
-        const PIN_SUPERVISOR = "123456";
+        const PIN_SUPERVISOR = "134340"; // PIN Actualizado
 
         // Referencias UI
         const inputCodigo = document.getElementById('inputCodigo');
@@ -306,10 +457,10 @@
 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td style="font-weight:bold;">${item.nombre}</td>
+                    <td style="font-weight:500;">${item.nombre}</td>
                     <td>$${item.precio.toFixed(2)}</td>
                     <td><input type="number" class="qty-input" value="${item.cantidad}" min="1" data-index="${index}"></td>
-                    <td>$${subtotal.toFixed(2)}</td>
+                    <td style="font-weight:600;">$${subtotal.toFixed(2)}</td>
                     <td><button class="btn-remove" data-index="${index}">X</button></td>
                 `;
                 carritoBody.appendChild(tr);
@@ -363,10 +514,10 @@
             
             if (efectivo > 0 && cambio >= 0) {
                 txtCambio.innerText = `Cambio: $${cambio.toFixed(2)}`;
-                txtCambio.style.color = "#28a745";
+                txtCambio.style.color = "#27ae60";
             } else {
                 txtCambio.innerText = `Cambio: $0.00`;
-                txtCambio.style.color = "#dc3545";
+                txtCambio.style.color = "#e74c3c";
             }
         }
 
@@ -447,13 +598,13 @@
                 filasArticulos += `<tr><td>${item.cantidad}</td><td>${item.nombre.substring(0, 15)}</td><td class="right">$${(item.precio * item.cantidad).toFixed(2)}</td></tr>`;
             });
 
-            // Plantilla de un ticket individual
+            // Plantilla de un ticket individual con el teléfono actualizado
             const plantillaTicket = (tipoCopia) => `
                 <div class="ticket-header">
                     <h2>Tienda Santa Lucía</h2>
                     <p>*** ${tipoCopia} ***</p>
                     <p>San Cristóbal de las Casas, Chiapas</p>
-                    <p>Tel: 000-000-0000</p>
+                    <p>Tel: 967 124 4141</p>
                     <p style="margin-top: 5px;"><strong>Operación: ${numOperacion}</strong></p>
                     <p>Fecha: ${fecha} ${hora}</p>
                     <p>Cliente: ${nombreCliente}</p>
@@ -484,7 +635,7 @@
                 plantillaTicket("COPIA TIENDA");
         }
 
-        // 5. CORTE DE CAJA CON HISTORIAL DE OPERACIONES
+        // 5. CORTE DE CAJA CON HISTORIAL DE OPERACIONES ÚNICAMENTE DEL DÍA
         document.getElementById('btnCorte').addEventListener('click', async () => {
             const pinIngresado = prompt("Módulo Restringido.\nIngrese el PIN de Supervisor (6 dígitos):");
             
@@ -502,7 +653,7 @@
             let ventasHoy = [];
 
             try {
-                // Consultamos las ventas
+                // Consultamos las ventas y filtramos rigurosamente por fechaHoy
                 const querySnapshot = await getDocs(collection(db, "ventas"));
                 querySnapshot.forEach((doc) => {
                     const venta = doc.data();
@@ -516,7 +667,7 @@
                     }
                 });
 
-                // Armar las filas del historial
+                // Armar las filas del historial del día
                 let filasHistorial = "";
                 ventasHoy.forEach(v => {
                     filasHistorial += `<tr><td>${v.num_operacion || "S/N"}</td><td>${v.hora}</td><td class="right">$${v.total.toFixed(2)}</td></tr>`;
@@ -530,7 +681,7 @@
                         <p>Fecha: ${fechaHoy} ${horaActual}</p>
                     </div>
                     
-                    <h3 style="font-size: 13px; margin-bottom: 5px; text-align: center; border-top: 1px dashed #000; padding-top: 10px;">Historial de Operaciones</h3>
+                    <h3 style="font-size: 13px; margin-bottom: 5px; text-align: center; border-top: 1px dashed #000; padding-top: 10px;">Movimientos del Día</h3>
                     <table class="ticket-table" style="margin-bottom: 15px;">
                         <thead><tr><th>Folio</th><th>Hora</th><th class="right">Total</th></tr></thead>
                         <tbody>${filasHistorial || '<tr><td colspan="3" style="text-align:center;">Sin ventas registradas hoy</td></tr>'}</tbody>
